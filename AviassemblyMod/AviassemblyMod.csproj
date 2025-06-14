@@ -23,6 +23,15 @@
 		<HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Aviassembly\Aviassembly_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
 		<Private>false</Private>
 	</Reference>
+	<Reference Include="UnityEngine.InputForUIModule">
+	  <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Aviassembly\Aviassembly_Data\Managed\UnityEngine.InputForUIModule.dll</HintPath>
+	</Reference>
+	<Reference Include="UnityEngine.InputLegacyModule">
+	  <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Aviassembly\Aviassembly_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+	</Reference>
+	<Reference Include="UnityEngine.InputModule">
+	  <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Aviassembly\Aviassembly_Data\Managed\UnityEngine.InputModule.dll</HintPath>
+	</Reference>
 	<Reference Include="UnityEngine.TextRenderingModule">
 	  <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Aviassembly\Aviassembly_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
 	</Reference>

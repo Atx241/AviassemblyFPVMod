@@ -3,12 +3,17 @@ using UnityEngine;
 using UnityEngine.UI;
 using BepInEx;
 using UnityEngine.SceneManagement;
+using System.IO;
+using System.Collections.Generic;
 
 namespace AviassemblyMod
 {
     [BepInPlugin("atxmedia.aviassembly.mod", "AtxMedia's Aviassembly Mod", "0.0.0")]
     public class Plugin : BaseUnityPlugin
     {
+        const string cockpitCamOffsetsFile = "C:\\AviFPV\\offsets.ccof";
+        const string builtinCockpitCamOffsetsFile = "GliderCockpit,0,0,0.05\nBiplaneCockpit,0,0.6,2\nCockpit,0,0.7,1.7\nJetCockpit,0,0.6,0.8\nPrivateJetCockpit,0,0.3,0.4\nBigCockpit,0,0.4,0.1\nSmallLargeCockpit,0,0.6,0.75\nJetlineCockpit,0,0.33,1\nJetCockpit02,0,0.3,0.5";
+        Dictionary<string, Vector3> cockpitCamOffsets = new Dictionary<string, Vector3>();
         //Shortening of Logger.LogInfo
         public void Log(object data)
         {
@@ -101,13 +106,53 @@ namespace AviassemblyMod
                 cameraObject = cameraController.gameObject;
                 Log("Found a camera controller (" + cameraObject.name + ")");
                 cameraController.enabled = false;
-                var target = player.transform.GetChild(0);
+                var target = FindCockpit(player.transform);
                 cameraObject.transform.SetParent(target, false);
-                cameraObject.transform.position = Vector3.zero;
                 cameraObject.AddComponent<FPVCamera>();
                 cameraObject.GetComponent<FPVCamera>().ccontroller = cameraController;
                 Log("Successfully added FPV camera monobehaviour");
-                PrintObjectTree(target.GetChild(0));
+                var targetName = target.name.Replace("(Clone)", "").Trim();
+                Log(targetName);
+                if (!Directory.Exists("C:\\AviFPV"))
+                {
+                    Directory.CreateDirectory("C:\\AviFPV");
+                }
+                if (!File.Exists(cockpitCamOffsetsFile))
+                {
+                    File.WriteAllText(cockpitCamOffsetsFile, builtinCockpitCamOffsetsFile);
+                }
+                {
+                    var lines = File.ReadAllLines(cockpitCamOffsetsFile);
+                    cockpitCamOffsets.Clear();
+                    foreach (var line in lines)
+                    {
+                        var segs = line.Split(',');
+                        if (segs.Length != 4)
+                        {
+                            Logger.LogError("Invalid cockpit cam offset entry!");
+                            continue;
+                        }
+                        var name = segs[0];
+                        float dx;
+                        float dy;
+                        float dz;
+                        if (float.TryParse(segs[1], out dx) && float.TryParse(segs[2], out dy) && float.TryParse(segs[3], out dz))
+                        {
+                            cockpitCamOffsets.Add(name, new Vector3(dx, dy, dz));
+                        } else
+                        {
+                            Logger.LogError("Invalid cockpit cam offset numbers!");
+                        }
+                    }
+                }
+                if (cockpitCamOffsets.ContainsKey(targetName))
+                {
+                    cameraObject.GetComponent<FPVCamera>().offset = cockpitCamOffsets[targetName];
+                } else
+                {
+                    Logger.LogError("Cockpit offset not found!");
+                }
+                //PrintComponents(player.transform.GetChild(13));
             }
         }
         //A utility function for viewing the root objects of scene trees
@@ -138,6 +183,41 @@ namespace AviassemblyMod
         void PrintObjectTree(Transform obj, int level = 0)
         {
             PrintObjectTree(obj.gameObject, level);
+        }
+        void PrintComponents(GameObject obj)
+        {
+            Log(obj.name);
+            foreach (var c in obj.GetComponents<Component>())
+            {
+                var o = "";
+                o += c.ToString();
+                o = o.Substring(obj.name.Length + 2);
+                o = o.Substring(0, o.Length - 1);
+                //If the script can be enabled/disabled, then show that
+                if (c is Behaviour)
+                {
+                    o += " (enabled: ";
+                    o += (c as Behaviour).enabled;
+                    o += ")";
+                }
+                Log(o);
+            }
+        }
+        void PrintComponents(Transform obj)
+        {
+            PrintComponents(obj.gameObject);
+        }
+        Transform FindCockpit(Transform parent)
+        {
+            foreach (var tr in parent)
+            {
+                var t = tr as Transform;
+                if (t.name.Contains("Cockpit"))
+                {
+                    return t;
+                }
+            }
+            return null;
         }
     }
 }
