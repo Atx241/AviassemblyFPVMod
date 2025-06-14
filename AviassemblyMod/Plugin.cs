@@ -28,7 +28,6 @@ namespace AviassemblyMod
         //This function runs when a new scene is loaded (this also calls GameAwake)
         void SceneLoad(Scene scene, LoadSceneMode mode)
         {
-            Resources.UnloadUnusedAssets();
             switch (scene.name)
             {
                 case "Menu":
@@ -108,7 +107,7 @@ namespace AviassemblyMod
                 cameraObject.AddComponent<FPVCamera>();
                 cameraObject.GetComponent<FPVCamera>().ccontroller = cameraController;
                 Log("Successfully added FPV camera monobehaviour");
-                PrintObjectTree(target.gameObject);
+                PrintObjectTree(target.GetChild(0));
             }
         }
         //A utility function for viewing the root objects of scene trees
@@ -135,6 +134,10 @@ namespace AviassemblyMod
                 o += "|_" + t.name;
                 Log(o);
             }
+        }
+        void PrintObjectTree(Transform obj, int level = 0)
+        {
+            PrintObjectTree(obj, level);
         }
     }
 }
