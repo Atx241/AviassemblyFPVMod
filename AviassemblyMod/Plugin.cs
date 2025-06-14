@@ -137,7 +137,7 @@ namespace AviassemblyMod
         }
         void PrintObjectTree(Transform obj, int level = 0)
         {
-            PrintObjectTree(obj, level);
+            PrintObjectTree(obj.gameObject, level);
         }
     }
 }
