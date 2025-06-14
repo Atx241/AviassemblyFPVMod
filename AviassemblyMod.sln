@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AviassemblyMod", "AviassemblyMod\AviassemblyMod.csproj", "{C3AB5406-D2EF-4579-B0EA-0F066E4D0AA6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C3AB5406-D2EF-4579-B0EA-0F066E4D0AA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3AB5406-D2EF-4579-B0EA-0F066E4D0AA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3AB5406-D2EF-4579-B0EA-0F066E4D0AA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3AB5406-D2EF-4579-B0EA-0F066E4D0AA6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5F2E2BA9-C1C9-464B-B55B-398181EA5D06}
+	EndGlobalSection
+EndGlobal

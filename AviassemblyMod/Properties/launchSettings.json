@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "AviassemblyMod": {
+      "commandName": "Project"
+    },
+    "Build": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\attic\\source\\repos\\AviassemblyMod\\AviassemblyMod\\run.bat"
+    }
+  }
+}
