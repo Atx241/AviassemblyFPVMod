@@ -15,6 +15,9 @@
 		<HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Aviassembly\BepInEx\core\BepInEx.dll</HintPath>
 		<Private>false</Private>
 	</Reference>
+	<Reference Include="Unity.InputSystem">
+	  <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Aviassembly\Aviassembly_Data\Managed\Unity.InputSystem.dll</HintPath>
+	</Reference>
 	<Reference Include="UnityEngine">
 		<HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Aviassembly\Aviassembly_Data\Managed\UnityEngine.dll</HintPath>
 		<Private>false</Private>

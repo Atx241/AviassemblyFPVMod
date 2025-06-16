@@ -13,7 +13,13 @@ namespace AviassemblyMod
     {
         const string cockpitCamOffsetsFile = "C:\\AviFPV\\offsets.ccof";
         const string builtinCockpitCamOffsetsFile = "GliderCockpit,0,0,0.05\nBiplaneCockpit,0,0.6,2\nCockpit,0,0.7,1.7\nJetCockpit,0,0.6,0.8\nPrivateJetCockpit,0,0.3,0.4\nBigCockpit,0,0.4,0.1\nSmallLargeCockpit,0,0.6,0.75\nJetlineCockpit,0,0.33,1\nJetCockpit02,0,0.3,0.5";
+
+        public static Plugin Instance = null;
+        
         Dictionary<string, Vector3> cockpitCamOffsets = new Dictionary<string, Vector3>();
+        
+        public PartBar fuelPartBar = null;
+        public GameObject customPrefabsContainer = null;
         //Shortening of Logger.LogInfo
         public void Log(object data)
         {
@@ -22,6 +28,7 @@ namespace AviassemblyMod
         //Bepinex calls this function at the start of running the game
         public void Awake()
         {
+            Instance = this;
             Log("Hello world from AtxMedia's Aviassembly Mod!");
             Log("Using .NET version " + Environment.Version);
             SceneManager.sceneLoaded += SceneLoad;
@@ -36,12 +43,6 @@ namespace AviassemblyMod
             switch (scene.name)
             {
                 case "Menu":
-                    /*Canvas[] canvi = FindObjectsByType<Canvas>(FindObjectsSortMode.None);
-                    Log("Canvases: ");
-                    foreach (var c in canvi)
-                    {
-                        Log(c.name);
-                    }*/
                     var mainMenuCanvasObject = GameObject.Find("Menu Canvas");
                     if (mainMenuCanvasObject == null)
                     {
@@ -62,6 +63,39 @@ namespace AviassemblyMod
                     text.text = "Mods powered by AtxMedia";
                     Log("Created credit text");
                     break;
+                case "Persistent":
+                    //Create persistent containers
+                    customPrefabsContainer = new GameObject("AtxPrefabs", typeof(PersistentContainer));
+                    //Move these containers to the persistent scene
+                    SceneManager.MoveGameObjectToScene(customPrefabsContainer, scene);
+                    //Move these containers to arbitrary positions that will never be reached by the player (hopefully)
+                    var nowhere = Vector3.one * -10000000000;
+                    customPrefabsContainer.transform.position = nowhere;
+                    Log("Created persistent containers");
+                    //Inject custom runtime manager
+                    var atxman = new GameObject("AtxManager", typeof(AtxManager));
+                    //atxman.SetActive(false);
+                    SceneManager.MoveGameObjectToScene(atxman, scene);
+                    break;
+                case "Building":
+                    var partBars = FindObjectsByType<PartBar>(FindObjectsSortMode.None);
+                    foreach (var partBar in partBars)
+                    {
+                        if (partBar.gameObject.name == "Fuel")
+                        {
+                            fuelPartBar = partBar;
+                            break;
+                        }
+                    }
+                    CustomParts.fuelPartBar = fuelPartBar;
+                    CustomParts.ReloadBuilder();
+                    break;
+/*                case "Game":
+                    foreach (var part in CustomParts.customParts)
+                    {
+                        part.SetActive(true);
+                    }
+                    break;*/
                 default:
                     break;
             }
@@ -113,16 +147,8 @@ namespace AviassemblyMod
                 Log("Successfully added FPV camera monobehaviour");
                 var targetName = target.name.Replace("(Clone)", "").Trim();
                 Log(targetName);
-                if (!Directory.Exists("C:\\AviFPV"))
                 {
-                    Directory.CreateDirectory("C:\\AviFPV");
-                }
-                if (!File.Exists(cockpitCamOffsetsFile))
-                {
-                    File.WriteAllText(cockpitCamOffsetsFile, builtinCockpitCamOffsetsFile);
-                }
-                {
-                    var lines = File.ReadAllLines(cockpitCamOffsetsFile);
+                    var lines = builtinCockpitCamOffsetsFile.Split('\n');
                     cockpitCamOffsets.Clear();
                     foreach (var line in lines)
                     {
@@ -156,7 +182,7 @@ namespace AviassemblyMod
             }
         }
         //A utility function for viewing the root objects of scene trees
-        void PrintSceneTree(Scene scene)
+        public void PrintSceneTree(Scene scene)
         {
             Log("Scene loaded: " + scene.name);
             GameObject[] roots = scene.GetRootGameObjects();
@@ -166,7 +192,7 @@ namespace AviassemblyMod
             }
         }
         //A utility function for viewing the direct children of objects (can be used in conjunction with PrintSceneTree)
-        void PrintObjectTree(GameObject obj, int level = 0)
+        public void PrintObjectTree(GameObject obj, int level = 0)
         {
             Log(obj.name);
             foreach (Transform t in obj.transform)
@@ -180,11 +206,11 @@ namespace AviassemblyMod
                 Log(o);
             }
         }
-        void PrintObjectTree(Transform obj, int level = 0)
+        public void PrintObjectTree(Transform obj, int level = 0)
         {
             PrintObjectTree(obj.gameObject, level);
         }
-        void PrintComponents(GameObject obj)
+        public void PrintComponents(GameObject obj)
         {
             Log(obj.name);
             foreach (var c in obj.GetComponents<Component>())
@@ -203,7 +229,7 @@ namespace AviassemblyMod
                 Log(o);
             }
         }
-        void PrintComponents(Transform obj)
+        public void PrintComponents(Transform obj)
         {
             PrintComponents(obj.gameObject);
         }
