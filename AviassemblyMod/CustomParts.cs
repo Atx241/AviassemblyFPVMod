@@ -10,8 +10,8 @@ namespace AviassemblyMod
         public static PartBar fuelPartBar = null;
         public static void AddParts()
         {
-            AddEngine("John", "Engine", 200);
-            AddEngine("Steve", "JetEngine", 400, true);
+            AddEngine("John", "Engine", 200, "ramjet");
+            AddEngine("Steve", "JetEngine", 400, "ramjet", true);
         }
         public static void ReloadBuilder()
         {
@@ -30,19 +30,27 @@ namespace AviassemblyMod
             }
             fuelPartBar.prefabs = partsList.ToArray();
         }
-        public static void AddEngine(string name, string rootPrefab, int thrust, bool electric = false)
+        public static void AddEngine(string name, string rootPrefab, int thrust, string model, bool electric = false)
         {
             var instantiator = PartPrefabs.GetPartPrefab(rootPrefab);
-            //instantiator.SetActive(false);
             var obj = Instantiate(instantiator, Plugin.Instance.customPrefabsContainer.transform);
             obj.name = name;
             obj.GetComponent<Engine>().thrust = thrust;
             obj.GetComponent<Engine>().electricEngine = electric;
+            var meshFilter = obj.GetComponent<MeshFilter>();
+            if (meshFilter == null)
+            {
+                meshFilter = obj.GetComponentInChildren<MeshFilter>();
+            }
+            var objResult = OBJLoader.Load(AtxManager.modelsPath + "/" + model + ".obj");
+            if (objResult.mesh == null)
+            {
+                AtxManager.Err("Model \"" + model + "\" does not exist.");
+                return;
+            }
+            meshFilter.sharedMesh = objResult.mesh;
             PartPrefabs.GetAllPrefabs().Add(obj);
             customParts.Add(obj);
-            AtxManager.Log("Created custom engine");
-            AtxManager.PrintComponents(obj);
-            //instantiator.SetActive(true);
         }
         public static void AddPartButton(GameObject prefab)
         {

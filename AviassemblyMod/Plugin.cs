@@ -25,6 +25,10 @@ namespace AviassemblyMod
         {
             Logger.LogInfo(data);
         }
+        public void Err(object data)
+        {
+            Logger.LogError(data);
+        }
         //Bepinex calls this function at the start of running the game
         public void Awake()
         {
@@ -134,13 +138,13 @@ namespace AviassemblyMod
                 //Assign the camera controller
                 cameraController = cameraControllers[cameraControllers.Length - 1];
             }
+            var target = FindCockpit(player.transform);
             //If we have a singular, non-null camera controller that we can use, we can add an FPV monobehaviour to it
-            if (cameraController != null && cameraControllers.Length < 2)
+            if (cameraController != null && cameraControllers.Length < 2 && target != null)
             {
                 cameraObject = cameraController.gameObject;
                 Log("Found a camera controller (" + cameraObject.name + ")");
                 cameraController.enabled = false;
-                var target = FindCockpit(player.transform);
                 cameraObject.transform.SetParent(target, false);
                 cameraObject.AddComponent<FPVCamera>();
                 cameraObject.GetComponent<FPVCamera>().ccontroller = cameraController;
